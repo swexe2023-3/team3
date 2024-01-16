@@ -22,4 +22,10 @@ test:
 
 production:
   <<: *default
-  database: db/production.sqlite3
+  adopter: postgresql
+  encoding: unicode
+  pool: 5
+  database: l5_ypiq
+  username: l5_ypiq_user
+  password: <%= ENV['MYSITE_DATABASE_PASSWORD'] %>
+  url: <%= ENV['DATABASE_URL'] %>
