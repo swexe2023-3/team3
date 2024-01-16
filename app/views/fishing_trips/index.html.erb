@@ -137,6 +137,7 @@
             <th>開催日</th>
             <th>募集者</th>
             <th>現在の参加人数</th>
+            <th>チャット</th>
             <th>キャンセル</th>
           </tr>
         </thead>
@@ -151,6 +152,13 @@
               <td>
                 <% approved_participants_count = fishing_trip.participations.where(status: 'approved').count %>
                 <%= "#{approved_participants_count}/#{fishing_trip.participant_limit}" %>
+              </td>
+              <td>
+                <% if fishing_trip.chat_room %>
+                  <%= link_to chat_room_path(fishing_trip.chat_room) do %>
+                    <i class="bi bi-chat-dots"></i>
+                  <% end %>
+                <% end %>
               </td>
               <td>
                 <!-- キャンセル -->
@@ -242,6 +250,14 @@
               </td>
               <td>
                 <%= link_to '削除', fishing_trip_path(fishing_trip), method: :delete, data: { confirm: '本当に削除しますか？' }, class: 'btn btn-danger' %>
+                <!-- キャンセル -->
+                <% participation = @current_user_participations[fishing_trip.id].find { |p| p.user_id == current_user.id && p.status == 'approved' } %>
+                <% if participation %>
+                  <%= form_with url: participation_path(participation), method: :patch do |form| %>
+                    <%= form.hidden_field :status, value: 'cancelled' %>
+                    <%= form.submit 'キャンセル', class: 'btn btn-success' %>
+                  <% end %>
+                <% end %>
               </td>
             </tr>
           </tbody>
